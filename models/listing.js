@@ -8,10 +8,9 @@ const ListingSchema = new Schema ({
     } ,
     description :String,
     image:{
-     type:String,
-     default:"https://www.istockphoto.com/photo/sunset-on-beach-gm825319778-133848233?utm_campaign=srp_photos_top&utm_content=https%3A%2F%2Funsplash.com%2Fs%2Fphotos%2Fhawai&utm_medium=affiliate&utm_source=unsplash&utm_term=hawai%3A%3A%3A",
-    set :(v)=>  v==="" ? "https://www.istockphoto.com/photo/sunset-on-beach-gm825319778-133848233?utm_campaign=srp_photos_top&utm_content=https%3A%2F%2Funsplash.com%2Fs%2Fphotos%2Fhawai&utm_medium=affiliate&utm_source=unsplash&utm_term=hawai%3A%3A%3A"
-     :v },
+        url:String,
+        filename:String
+    },
     price:Number,
     location:String,
     country:String,
@@ -22,7 +21,18 @@ const ListingSchema = new Schema ({
     owner:{
        type:Schema.Types.ObjectId,
         ref:"User",
-    }
+    },
+    geometry:{
+        type: {
+          type: String, // Don't do `{ location: { type: String } }`
+          enum: ['Point'], // 'location.type' must be 'Point'
+          required: true
+        },
+        coordinates: {
+          type: [Number],
+          required: true
+        }
+      }
     
 });
   const Listing = mongoose.model("Listing", ListingSchema);

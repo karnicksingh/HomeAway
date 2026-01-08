@@ -1,3 +1,7 @@
+if(process.env.NODE_ENV !="production"){
+  require('dotenv').config()
+}
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -5,6 +9,7 @@ const path = require("path");
 const methodOverride= require("method-override");
 const ejsMate= require("ejs-mate");
 const session = require("express-session");
+const MongoStore = require('connect-mongo').default;
 const flash = require('connect-flash');
 const passport = require("passport");
 const localStrategy = require("passport-local");
@@ -22,8 +27,23 @@ app.use(methodOverride("_method"));
 app.engine( "ejs" , ejsMate); 
 app.use(express.static(path.join(__dirname, "public")));
 
+
+
+const store = MongoStore.create({
+  mongoUrl:process.env.ATLASTDB_URL,
+  crypto:{
+    secret:process.env.SECRET
+  },
+  touchAfter: 24 * 3600,
+});
+
+store.on("error",(err)=>{
+  console.log("Error in MONGO SESSION STORE",err)
+})
+
 const sessionOption = session({
-  secret: "mysecret",
+  store,
+  secret: process.env.SECRET,
   resave: false,
   saveUninitialized: true,
   cookie :{
@@ -32,6 +52,7 @@ const sessionOption = session({
     httpOnly:true
   }
 });
+
 
 app.use(sessionOption);
 app.use(flash());
@@ -43,7 +64,7 @@ main()
 .catch((err)=> console.log(err));
 
 async function main() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/Wanderlust');
+  await mongoose.connect(process.env.ATLASTDB_URL);
 }
 
 app.use(passport.initialize());
@@ -59,14 +80,6 @@ app.use((req,res,next)=>{
     next();
 });
 
-// app.get("/demouser" , async (req,res)=>{
-//  let fakeUser =new User({
-//   email:"student@gmail.com",
-//   username:"student4"
-//  });
-//  let registerUser = await User.register(fakeUser,"helloworld");
-//  res.send(registerUser);
-// });
 
 
 
@@ -78,7 +91,7 @@ app.use("/", userRouter);
 
 app.use((err,req,res,next)=>{
   let{statusCode=500,message="Something went wrong"}=err;
-  // res.status(statusCode).send(message);
+  // res.status(statusCode).send(message); 
   res.render("./listings/error.ejs",{message})
 })
 
