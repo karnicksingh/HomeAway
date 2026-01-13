@@ -101,5 +101,5 @@ app.use((err,req,res,next)=>{
 
 const PORT = 8080;
 app.listen(PORT ,()=>{
-    console.log('Server is listening to port ${PORT}');
+    console.log(`Server is listening to port ${PORT}`);
 })
