@@ -29,20 +29,20 @@ app.use(express.static(path.join(__dirname, "public")));
 
 
 
-const store = MongoStore.create({
-  mongoUrl:process.env.ATLASTDB_URL,
-  crypto:{
-    secret:process.env.SECRET
-  },
-  touchAfter: 24 * 3600,
-});
+// const store = MongoStore.create({
+//   mongoUrl:process.env.ATLASTDB_URL,
+//   crypto:{
+//     secret:process.env.SECRET
+//   },
+//   touchAfter: 24 * 3600,
+// });
 
-store.on("error",(err)=>{
-  console.log("Error in MONGO SESSION STORE",err)
-})
+// store.on("error",(err)=>{
+//   console.log("Error in MONGO SESSION STORE",err)
+// })
 
 const sessionOption = session({
-  store,
+  // store,
   secret: process.env.SECRET,
   resave: false,
   saveUninitialized: true,
