@@ -9,7 +9,7 @@ const path = require("path");
 const methodOverride= require("method-override");
 const ejsMate= require("ejs-mate");
 const session = require("express-session");
-const MongoStore = require('connect-mongo');
+const MongoStore = require('connect-mongo').default;
 const flash = require('connect-flash');
 const passport = require("passport");
 const localStrategy = require("passport-local");
@@ -29,20 +29,20 @@ app.use(express.static(path.join(__dirname, "public")));
 
 
 
-// const store = MongoStore.create({
-//   mongoUrl:process.env.ATLASTDB_URL,
-//   crypto:{
-//     secret:process.env.SECRET
-//   },
-//   touchAfter: 24 * 3600,
-// });
+const store = MongoStore.create({
+  mongoUrl:process.env.ATLASTDB_URL,
+  crypto:{
+    secret:process.env.SECRET
+  },
+  touchAfter: 24 * 3600,
+});
 
-// store.on("error",(err)=>{
-//   console.log("Error in MONGO SESSION STORE",err)
-// })
+store.on("error",(err)=>{
+  console.log("Error in MONGO SESSION STORE",err)
+})
 
 const sessionOption = session({
-  // store,
+  store,
   secret: process.env.SECRET,
   resave: false,
   saveUninitialized: true,
@@ -69,7 +69,7 @@ async function main() {
 
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use( new localStrategy((User.authenticate()))); 
+passport.use(new localStrategy(User.authenticate())); 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 

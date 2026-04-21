@@ -1,7 +1,7 @@
 const geocoding = require("@mapbox/mapbox-sdk/services/geocoding");
 const Listing = require("../models/listing.js");
 const mbxGeocoding = require('@mapbox/mapbox-sdk/services/geocoding');
-const { stackTraceLimit } = require("../utils/ExpressError.js");
+// const { stackTraceLimit } = require("../utils/ExpressError.js");
 const maptoken = process.env.MAP_TOKEN;
 const geocodingClient = mbxGeocoding({ accessToken: maptoken });
     
@@ -19,7 +19,7 @@ const geocodingClient = mbxGeocoding({ accessToken: maptoken });
        const listing =  await Listing.findById(id).populate("reviews").populate("owner"); 
        if(!listing){
          req.flash("error","Listing you requested is not existed !");
-         res.redirect("/listings");
+          return res.redirect("/listings");
        };
        res.render("./listings/show.ejs",{listing});
        }
@@ -39,7 +39,7 @@ const geocodingClient = mbxGeocoding({ accessToken: maptoken });
         newListing.image={url,filename};
         newListing.geometry=response.body.features[0].geometry;
         await newListing.save()
-        req.flash("sucess","New listing Created");
+        req.flash("success","New listing Created");
        res.redirect("/listings");
     }
 
@@ -61,13 +61,13 @@ const geocodingClient = mbxGeocoding({ accessToken: maptoken });
         listing.image={url,filename};
         await listing.save();
        }
-        req.flash("sucess","Listing Updated !");
+        req.flash("success","Listing Updated !");
        res.redirect(`/listings/${id}`);
       }
 
       module.exports.deleteListing=async(req,res)=>{ 
         let {id} = req.params;
        await Listing.findByIdAndDelete(id); 
-       req.flash("sucess","Listing Deleted !");
+       req.flash("success","Listing Deleted !");
        res.redirect("/listings");
       }

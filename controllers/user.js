@@ -4,7 +4,7 @@ module.exports.renderSinupForm = (req, res) => {
 };
 
 
-module.exports.Sinup = async (req, res) => {
+module.exports.Sinup = async (req, res,next) => {
     try {
         let { username, email, password } = req.body;
         const newUser = new User({ email, username });
@@ -14,7 +14,7 @@ module.exports.Sinup = async (req, res) => {
             if (err) {
                 return next(err);
             }
-            req.flash("sucess", " Welcome to Homeaway!");
+            req.flash("success", " Welcome to Homeaway!");
             res.redirect("/listings")
         });
     } catch (e) {
@@ -30,7 +30,7 @@ module.exports.renderLoginForm = (req, res) => {
 
 
 module.exports.Login = async (req, res) => {
-    req.flash("sucess", "Welcome back to HomeAway");
+    req.flash("success", "Welcome back to HomeAway");
     let redirectUrl = res.locals.redirectUrl || "/listings";
     res.redirect(redirectUrl);
 };
@@ -39,7 +39,7 @@ module.exports.logout = (req, res, next) => {
         if (err) {
             return next(err);
         }
-        req.flash("sucess", " You are logged out!");
+        req.flash("success", " You are logged out!");
         res.redirect("/listings")
     });
 }
